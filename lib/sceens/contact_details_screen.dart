@@ -49,7 +49,7 @@ class ProfileViewScreen extends StatelessWidget {
                 Navigator.pop(context); // close bottom sheet
               },
               child: const Text(
-                "Delete",
+                "del",
                 style: TextStyle(color: DarkColors.text),
               ),
             ),
