@@ -26,15 +26,15 @@ class ContactProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateContact(ContactModel updateContact) {
-    final index = _contact.indexWhere((c) => c.id == updateContact.id);
-    if (index != -1) {
-      _contact[index] = updateContact;
-      save();
-      loadContacts();
-      notifyListeners();
-    }
+  void updateContact(ContactModel updatedContact) {
+  final index = _contact.indexWhere((c) => c.id == updatedContact.id);
+  if (index != -1) {
+    _contact[index] = updatedContact;
+    save();
+    notifyListeners();
   }
+}
+
 
   void addContact(ContactModel c) {
     _contact.add(c);
@@ -48,14 +48,15 @@ class ContactProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleFavorite(String id) {
-    final c = _contact.indexWhere((c) => c.id == id);
-    if (c != -1) {
-      _contact[c].isFavorite = !_contact[c].isFavorite;
-      save();
-      notifyListeners();
-    }
+ void toggleFavorite(String id) {
+  final c = _contact.indexWhere((c) => c.id == id);
+  if (c != -1) {
+    _contact[c].isFavorite = !_contact[c].isFavorite;
+    save();
+    notifyListeners(); // ✅ clean
   }
+}
+
 
   void saveContacts() {}
 

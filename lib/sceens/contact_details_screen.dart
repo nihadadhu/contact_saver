@@ -1,24 +1,33 @@
 import 'dart:io';
 import 'package:contact_saver/appColor/app_colors.dart';
-import 'package:contact_saver/model/contact_model.dart';
+import 'package:contact_saver/provider/contact_provider.dart';
 import 'package:contact_saver/sceens/add_edit_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 
 class ProfileViewScreen extends StatelessWidget {
-  final ContactModel contact;
-  final VoidCallback onFav;
-  final VoidCallback onDelete;
+  final String contactId;
+
+
+
 
   const ProfileViewScreen({
     super.key,
-    required this.contact,
-    required this.onFav,
-    required this.onDelete,
+    required this.contactId,
   });
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<ContactProvider>();
+   final contact = provider.contact.firstWhere(
+  (c) => c.id == contactId,
+);
+
+   
+  
+
+
     void showDeleteDialog() {
       showDialog(
         context: context,
@@ -27,20 +36,22 @@ class ProfileViewScreen extends StatelessWidget {
           content: const Text("Are you sure you want to delete this contact?"),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(ctx); // close dialog
-              },
+              onPressed: () => Navigator.pop(ctx),
               child: const Text("Cancel"),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 231, 105, 96),
+                backgroundColor: Colors.red,
               ),
               onPressed: () {
-                Navigator.pop(context);
-                onDelete();
+                provider.deleteContact(contactId);
+                Navigator.pop(ctx);
+                Navigator.pop(context); // close bottom sheet
               },
-              child: const Text("OK", style: TextStyle(color: DarkColors.text)),
+              child: const Text(
+                "Delete",
+                style: TextStyle(color: DarkColors.text),
+              ),
             ),
           ],
         ),
@@ -48,95 +59,97 @@ class ProfileViewScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            height: 850,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
-              ),
-            ),
-            child: Column(
+      body: Container(
+        height: 810,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+          ),
+        ),
+        child: Column(
+          children: [
+            const Gap(20),
+            
+            /// TOP ACTION BAR
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Gap(20),
+                IconButton(
+                  onPressed: () =>
+                      provider.toggleFavorite(contactId),
+                  icon: Icon(
+                    contact.isFavorite
+                        ? Icons.star
+                        : Icons.star_border,
+                    color: DarkColors.icon,
+                  ),
+                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: IconButton(
-                        onPressed: onFav,
-
-                        icon: Icon(
-                          contact.isFavorite ? Icons.star : Icons.star_border,
-                        ),
-                        color: DarkColors.icon,
-                      ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                AddEditScreen(contact: contact),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.edit_outlined),
+                      color: DarkColors.icon,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    AddEditScreen(contact: contact),
-                              ),
-                            );
-                          },
-                          icon: Icon(Icons.edit_outlined),
-                          color: DarkColors.icon,
-                        ),
-
-                        IconButton(
-                          onPressed: showDeleteDialog,
-                          icon: Icon(Icons.delete_outline_outlined),
-                          color: DarkColors.icon,
-                        ),
-                      ],
+                    IconButton(
+                      onPressed: showDeleteDialog,
+                      icon: const Icon(Icons.delete_outline),
+                      color: DarkColors.icon,
                     ),
                   ],
                 ),
-                CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.deepPurple.shade100,
-                  backgroundImage: contact.imagePath != null
-                      ? FileImage(File(contact.imagePath!))
-                      : null,
-                  child: contact.imagePath == null
-                      ? const Icon(Icons.person, size: 60)
-                      : null,
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  contact.name,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: DarkColors.text,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  contact.phone,
-                  style: const TextStyle(fontSize: 16, color: DarkColors.text),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  contact.email,
-                  style: const TextStyle(fontSize: 16, color: DarkColors.text),
-                ),
-                const SizedBox(height: 30),
-                _infoTile(Icons.phone_outlined, contact.phone),
-                _infoTile(Icons.email_outlined, contact.email),
               ],
             ),
-          ),
+            
+            /// PROFILE IMAGE
+            CircleAvatar(
+              radius: 60,
+              backgroundImage: contact.imagePath != null
+                  ? FileImage(File(contact.imagePath!))
+                  : null,
+              child: contact.imagePath == null
+                  ? const Icon(Icons.person, size: 60)
+                  : null,
+            ),
+            
+            const Gap(20),
+            
+            /// NAME
+            Text(
+              contact.name,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: DarkColors.text,
+              ),
+            ),
+            
+            const Gap(8),
+            
+            /// PHONE
+            Text(
+              contact.phone,
+              style: const TextStyle(
+                fontSize: 16,
+                color: DarkColors.text,
+              ),
+            ),
+            
+            const Gap(30),
+            
+            _infoTile(Icons.phone, contact.phone),
+            _infoTile(Icons.email, contact.email),
+          ],
         ),
       ),
     );
@@ -146,8 +159,9 @@ class ProfileViewScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Card(
-        elevation: 3,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
         child: ListTile(
           leading: Icon(icon, color: Colors.deepPurple),
           title: Text(text),

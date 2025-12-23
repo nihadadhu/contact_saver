@@ -54,14 +54,18 @@ class ContactFormProvider with ChangeNotifier {
           isFavorite: editingContact?.isFavorite ?? false,
         ),
       );
-    } else if (editingContact != null) {
-     editingContact!
-  ..name = nameController.text
-  ..phone = phoneController.text
-  ..email = emailController.text
-  ..imagePath = imageProvider.image?.path;
-
-    }
+    } else {
+  contactProvider.updateContact(
+    ContactModel(
+      id: editingContact!.id,
+      name: nameController.text,
+      phone: phoneController.text,
+      email: emailController.text,
+      imagePath: imageProvider.image?.path,
+      isFavorite: editingContact!.isFavorite,
+    ),
+  );
+}
     clearController();
     editingContact = null;
   }
