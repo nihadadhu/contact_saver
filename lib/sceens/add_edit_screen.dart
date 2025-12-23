@@ -19,25 +19,24 @@ class _AddEditScreenState extends State<AddEditScreen> {
   @override
   void initState() {
     super.initState();
- WidgetsBinding.instance.addPostFrameCallback((_) {
-  final form = context.read<ContactFormProvider>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final form = context.read<ContactFormProvider>();
 
-  if (widget.contact != null) {
-    form.loadContact(widget.contact!);
-    context.read<ImagePickerProvider>()
-      .setImage(widget.contact!.imagePath);
-  } else {
-    form.clearController();
-    context.read<ImagePickerProvider>().clearImage();
-  }
-});
+      if (widget.contact != null) {
+        form.loadContact(widget.contact!);
+        context.read<ImagePickerProvider>().setImage(widget.contact!.imagePath);
+      } else {
+        form.clearController();
+        context.read<ImagePickerProvider>().clearImage();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final contactProvider = context.read<ContactFormProvider>();
     final isEdit = widget.contact != null;
-   
+
     // var nameController = TextEditingController(
     //   text: widget.contact?.name ?? '',
     // );
@@ -125,7 +124,7 @@ class _AddEditScreenState extends State<AddEditScreen> {
                 );
               },
             ),
-            
+
             Gap(2),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -153,6 +152,7 @@ class _AddEditScreenState extends State<AddEditScreen> {
                     contactProvider.clearController();
                     imageprovider.clearImage();
                     Navigator.pop(context);
+                    
                   },
                   child: Text(
                     "Done",
@@ -162,8 +162,8 @@ class _AddEditScreenState extends State<AddEditScreen> {
                 Gap(5),
               ],
             ),
-            ],
-          ),
+          ],
+        ),
       ),
     );
   }
