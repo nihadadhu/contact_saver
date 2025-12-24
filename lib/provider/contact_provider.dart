@@ -4,7 +4,6 @@ import 'package:contact_saver/Local_Storage/storage.dart';
 import 'package:contact_saver/model/contact_model.dart';
 import 'package:flutter/material.dart';
 
-
 class ContactProvider with ChangeNotifier {
   List<ContactModel> _contact = [];
   String searchQuery = '';
@@ -17,7 +16,10 @@ class ContactProvider with ChangeNotifier {
       return _contact;
     }
     return _contact
-        .where((c) => c.name.toLowerCase().contains(searchQuery.toLowerCase()))
+        .where(
+          (c) =>
+              c.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
+              c.phone.contains(searchQuery) ,        )
         .toList();
   }
 
@@ -27,14 +29,13 @@ class ContactProvider with ChangeNotifier {
   }
 
   void updateContact(ContactModel updatedContact) {
-  final index = _contact.indexWhere((c) => c.id == updatedContact.id);
-  if (index != -1) {
-    _contact[index] = updatedContact;
-    save();
-    notifyListeners();
+    final index = _contact.indexWhere((c) => c.id == updatedContact.id);
+    if (index != -1) {
+      _contact[index] = updatedContact;
+      save();
+      notifyListeners();
+    }
   }
-}
-
 
   void addContact(ContactModel c) {
     _contact.add(c);
@@ -48,15 +49,14 @@ class ContactProvider with ChangeNotifier {
     notifyListeners();
   }
 
- void toggleFavorite(String id) {
-  final c = _contact.indexWhere((c) => c.id == id);
-  if (c != -1) {
-    _contact[c].isFavorite = !_contact[c].isFavorite;
-    save();
-    notifyListeners(); // ✅ clean
+  void toggleFavorite(String id) {
+    final c = _contact.indexWhere((c) => c.id == id);
+    if (c != -1) {
+      _contact[c].isFavorite = !_contact[c].isFavorite;
+      save();
+      notifyListeners(); // ✅ clean
+    }
   }
-}
-
 
   void saveContacts() {}
 

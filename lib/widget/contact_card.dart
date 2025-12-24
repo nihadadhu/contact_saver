@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:contact_saver/appColor/app_colors.dart';
@@ -41,58 +40,59 @@ class ContactCard extends StatelessWidget {
             context,
           ).showSnackBar(const SnackBar(content: Text("Contact deleted")));
         },
-        child:  Container(
-  decoration: BoxDecoration(
-    color: LightColors.bg,
-    borderRadius: BorderRadius.circular(50),
-    boxShadow: const [
-      BoxShadow(
-        offset: Offset(1, 1),
-        spreadRadius: 1,
-        blurRadius: 1,
-        color: Colors.grey,
-      ),
-    ],
-  ),
-  child: ListTile(
-    leading: CircleAvatar(
-      radius: 25,
-      backgroundColor: Colors.grey.shade300,
-      backgroundImage: contact.imagePath != null
-          ? FileImage(File(contact.imagePath!))
-          : null,
-      child: contact.imagePath == null
-          ? const Icon(Icons.person, size: 30)
-          : null,
-    ),
-    title: Text(
-      contact.name,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      ),
-    ),
-    subtitle: Text(contact.phone),
-    trailing: IconButton(
-      icon: Icon(
-        contact.isFavorite
-            ? Icons.star
-            : Icons.star_border,
-        color: Colors.deepPurple,
-      ),
-      onPressed: onFav,
-    ),
-        onTap: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => ProfileViewScreen(contactId: contact.id),
-    ),
-  );
-},
-
-  ),
-),
+        child: Container(
+          decoration: BoxDecoration(
+            color: LightColors.bg,
+            borderRadius: BorderRadius.circular(50),
+            boxShadow: const [
+              BoxShadow(
+                offset: Offset(1, 1),
+                spreadRadius: 1,
+                blurRadius: 1,
+                color: Colors.grey,
+              ),
+            ],
+          ),
+          child: ListTile(
+            leading: CircleAvatar(
+              radius: 25,
+              backgroundColor: DarkColors.bg,
+              backgroundImage: contact.imagePath != null
+                  ? FileImage(File(contact.imagePath!))
+                  : null,
+              child: contact.imagePath == null
+                  ? const Icon(Icons.person, size: 30)
+                  : null,
+            ),
+            title: Text(
+              contact.name,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: DarkColors.text,
+                fontSize: 16,
+              ),
+            ),
+            subtitle: Text(
+              contact.phone,
+              style: TextStyle(color: DarkColors.text),
+            ),
+            trailing: IconButton(
+              icon: Icon(
+                contact.isFavorite ? Icons.star : Icons.star_border,
+                color: Colors.deepPurple,
+              ),
+              onPressed: onFav,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ProfileViewScreen(contactId: contact.id),
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }

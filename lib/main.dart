@@ -11,7 +11,11 @@ import 'package:contact_saver/provider/image_provider.dart';
 
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final contactProvider = ContactProvider();
+  await contactProvider.loadContacts();
   runApp(
     MultiProvider(
       providers: [

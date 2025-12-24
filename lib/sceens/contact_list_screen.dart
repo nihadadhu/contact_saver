@@ -30,7 +30,7 @@ class ContactListScreen extends StatelessWidget {
                 ),
               ),
               centerTitle: true,
-      
+
               flexibleSpace: FlexibleSpaceBar(
                 background: SafeArea(
                   child: Padding(
@@ -43,10 +43,23 @@ class ContactListScreen extends StatelessWidget {
                 ),
               ),
             ),
-      
+
             Consumer<ContactProvider>(
               builder: (context, provider, _) {
                 final filteredContacts = provider.getFilteredContacts();
+
+                if (filteredContacts.isEmpty) {
+                  return const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Text(
+                        "No contacts found",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  );
+                }
+
                 return SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final c = filteredContacts[index];
